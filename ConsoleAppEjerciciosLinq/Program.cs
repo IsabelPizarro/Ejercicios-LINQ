@@ -12,6 +12,22 @@ using ConsoleAppEjerciciosLinq.Models;
 
 namespace ConsoleAppEjerciciosLinq
 {
+    public static class Extensions
+    {
+        public static string PrintElements<T>(this List<T> list)
+        {
+            string resultado = "";
+
+            for (var i = 0; i < list.Count; i++)
+            {
+                resultado += list[i].ToString();
+                if (i < list.Count - 1) resultado += ", ";
+            }
+
+            return resultado;
+        }
+    }
+
     public class Program
     {
         public static ModelNorthwind db;
@@ -30,6 +46,7 @@ namespace ConsoleAppEjerciciosLinq
         public static List<Summary_of_Sales_by_Quarter> VentasTrimestrales;
         public static List<Summary_of_Sales_by_Year> VentasAnuales;
 
+
         static void Main(string[] args)
         {
             Init();
@@ -44,23 +61,23 @@ namespace ConsoleAppEjerciciosLinq
                 Console.Write("Número de Ejercicio: ");
                 valor = Console.ReadLine();
 
-                if (valor.ToLower() == "c") Console.Clear();
-                else
+                if (valor != "0")
                 {
-                    var m = typeof(Program).GetMethods().Where(r => r.Name == "Exercise" + valor.PadLeft(2, '0')).FirstOrDefault();
-                    if (m != null) _ = m.Invoke(null, null);
+                    if (valor.ToLower() == "c") Console.Clear();
                     else
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("No existe el ejercicio {0}.", valor.ToString());
-                        Console.ForegroundColor = ConsoleColor.White;
+                        var m = typeof(Program).GetMethods().Where(r => r.Name == "Exercise" + valor.PadLeft(2, '0')).FirstOrDefault();
+                        if (m != null) _ = m.Invoke(null, null);
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("No existe el ejercicio {0}.", valor.ToString());
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }
                     }
                 }
             }
-
-        Console.ReadKey();
         }
-
 
         ///<summary>
         /// Colección: Numeros
@@ -77,6 +94,21 @@ namespace ConsoleAppEjerciciosLinq
             Console.WriteLine("==========================================================");
             Console.ForegroundColor = ConsoleColor.White;
 
+            var numAlto = Numeros.Max();
+            Console.WriteLine("Valor más alto {0}", numAlto);
+            
+            Console.WriteLine("Valor más bajo {0}", Numeros.Min());
+            Console.WriteLine("Media: {0}", Numeros.Average().ToString("N2"));
+            Console.WriteLine("Suma Total: {0}", Numeros.Sum());
+            Console.WriteLine("Número de elementos: {0}", Numeros.Count());
+
+            Console.WriteLine("Números Pares: {0}", Numeros.Where(r => r % 2 == 0).ToList().PrintElements());
+            Console.WriteLine("Números finalizan 7: {0}", Numeros.Where(r => r.ToString()[r.ToString().Length - 1] == '7').ToList().PrintElements());
+            Console.WriteLine("Números contienen 7: {0}", Numeros.Where(r => r.ToString().Contains("7")).ToList().PrintElements());
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("==========================================================");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
 
@@ -93,6 +125,13 @@ namespace ConsoleAppEjerciciosLinq
             Console.WriteLine("==========================================================");
             Console.ForegroundColor = ConsoleColor.White;
 
+            Console.WriteLine("Original: {0}", Numeros2.PrintElements());
+            Console.WriteLine("Redondeo: {0}", Numeros2.Select(r => Decimal.Round(r)).ToList().PrintElements());
+            Console.WriteLine("Redondeo (pares): {0}", Numeros2.Where(r => r % 2 == 0).Select(r => Decimal.Round(r)).ToList().PrintElements());
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("==========================================================");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
 
@@ -108,6 +147,11 @@ namespace ConsoleAppEjerciciosLinq
             Console.WriteLine("==========================================================");
             Console.ForegroundColor = ConsoleColor.White;
 
+            Console.WriteLine("Frutas: {0}", Frutas.Where(r => r[0] == 'M' && r[r.Length - 1] == 'a').ToList().PrintElements());
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("==========================================================");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
 
@@ -123,6 +167,11 @@ namespace ConsoleAppEjerciciosLinq
             Console.WriteLine("==========================================================");
             Console.ForegroundColor = ConsoleColor.White;
 
+            Console.WriteLine("Letras: {0}", Frutas.Sum(r => r.Length));
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("==========================================================");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
 
@@ -135,6 +184,18 @@ namespace ConsoleAppEjerciciosLinq
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Ejercicio 05");
+            Console.WriteLine("==========================================================");
+            Console.ForegroundColor = ConsoleColor.White;
+
+            var empleados = Empleados.Select(r => new { Name = (r.FirstName + " " + r.LastName), r.Address, r.City, r.Region }).ToList();
+
+            Console.WriteLine("EMPLEADOS");
+            foreach (var item in empleados)
+            {
+                Console.WriteLine("{0} - {1} {2} ({3})", item.Name, item.Address.Replace(Environment.NewLine, ""), item.Region, item.City);
+            }
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("==========================================================");
             Console.ForegroundColor = ConsoleColor.White;
 
@@ -152,6 +213,19 @@ namespace ConsoleAppEjerciciosLinq
             Console.WriteLine("==========================================================");
             Console.ForegroundColor = ConsoleColor.White;
 
+            var empleados = Empleados.Select(r => new { Name = (r.FirstName + " " + r.LastName), r.Address, r.City, r.Region }).ToList();
+
+            Console.WriteLine("EMPLEADOS");
+            foreach (var item in empleados)
+            {
+                Console.WriteLine("{0} - {1} {2} ({3})", item.Name, item.Address.Replace(Environment.NewLine, ""), item.Region, item.City);
+            }
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("==========================================================");
+            Console.ForegroundColor = ConsoleColor.White;
+
+
         }
 
 
@@ -166,6 +240,20 @@ namespace ConsoleAppEjerciciosLinq
             Console.WriteLine("==========================================================");
             Console.ForegroundColor = ConsoleColor.White;
 
+            var empleados = Empleados
+                .Where(r => r.Country == "USA")
+                .Select(r => new { Name = (r.FirstName + " " + r.LastName), r.Address, r.City, r.Region })
+                .ToList();
+
+            Console.WriteLine("EMPLEADOS DE USA");
+            foreach (var item in empleados)
+            {
+                Console.WriteLine("{0} - {1} {2} ({3})", item.Name, item.Address.Replace(Environment.NewLine, ""), item.Region, item.City);
+            }
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("==========================================================");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
 
@@ -180,6 +268,21 @@ namespace ConsoleAppEjerciciosLinq
             Console.WriteLine("==========================================================");
             Console.ForegroundColor = ConsoleColor.White;
 
+            var empleados = Empleados
+                .Where(r => r.BirthDate <= DateTime.Now.AddDays(-50) && r.BirthDate != null)
+                .Select(r => new { Name = (r.FirstName + " " + r.LastName), r.Address, r.City, r.Region, r.BirthDate })
+                .ToList();
+
+            Console.WriteLine("EMPLEADOS DE MAYORES DE 50 AÑOS");
+            foreach (var item in empleados)
+            {
+                Console.WriteLine("{0} - {1} {2} ({3}) - {4}", item.Name, item.Address.Replace(Environment.NewLine, ""), item.Region, item.City, item.BirthDate.GetValueOrDefault().ToShortDateString());
+            }
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("==========================================================");
+            Console.ForegroundColor = ConsoleColor.White;
+
         }
 
 
@@ -191,6 +294,14 @@ namespace ConsoleAppEjerciciosLinq
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Ejercicio 09");
+            Console.WriteLine("==========================================================");
+            Console.ForegroundColor = ConsoleColor.White;
+
+            Console.WriteLine("Ventas 1996: {0}", VentasAnuales
+                .Where(r => r.ShippedDate.GetValueOrDefault().Year == 1996)
+                .Sum(r => r.Subtotal));
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("==========================================================");
             Console.ForegroundColor = ConsoleColor.White;
 
@@ -270,6 +381,21 @@ namespace ConsoleAppEjerciciosLinq
             Console.WriteLine("==========================================================");
             Console.ForegroundColor = ConsoleColor.White;
 
+            var condimentos = ProductosCategoria
+                .Where(r => r.CategoryName == "Condiments")
+                .OrderBy(r => r.UnitsInStock)
+                .Take(3)
+                .ToList();
+
+            foreach (var item in condimentos)
+            {
+                Console.WriteLine("{0} - Stock {1}", item.ProductName, item.UnitsInStock);
+            }
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("==========================================================");
+            Console.ForegroundColor = ConsoleColor.White;
+
         }
 
 
@@ -282,6 +408,19 @@ namespace ConsoleAppEjerciciosLinq
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Ejercicio 12");
+            Console.WriteLine("==========================================================");
+            Console.ForegroundColor = ConsoleColor.White;
+
+            var productos = ProductosCategoria
+                .Where(r => r.ProductName.StartsWith("Louisiana") && r.QuantityPerUnit.Contains("32"))
+                .ToList();
+
+            foreach (var item in productos)
+            {
+                Console.WriteLine("{0} - Cantidad (unidad): {1}", item.ProductName, item.QuantityPerUnit);
+            }
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("==========================================================");
             Console.ForegroundColor = ConsoleColor.White;
 
@@ -300,10 +439,22 @@ namespace ConsoleAppEjerciciosLinq
             Console.WriteLine("==========================================================");
             Console.ForegroundColor = ConsoleColor.White;
 
+            var pedidos = Pedidos
+                .Select(r => new { r.OrderID, Total = r.Order_Details.Sum(s => s.Quantity * s.UnitPrice) })
+                .ToList();
+
+            foreach (var item in pedidos)
+            {
+                Console.WriteLine("#{0} -> {1} Euros", item.OrderID, item.Total.ToString("N2"));
+            }
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("==========================================================");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
 
-        /// Colección: Productos
+        /// Colección: Empleados
         /// TODO (Dificultad: Media)
         ///  - Cual es el mayor de los empleados que reporta al empleado 5 (Steven Buchanan).
         ///  - Filtra, usuarios que reporan a Steven utilizando la propiedad ReportTo
@@ -317,6 +468,16 @@ namespace ConsoleAppEjerciciosLinq
             Console.WriteLine("==========================================================");
             Console.ForegroundColor = ConsoleColor.White;
 
+            var empleado = Empleados
+                .Where(r => r.ReportsTo == 5)
+                .OrderBy(r => r.BirthDate)
+                .FirstOrDefault();
+
+            Console.WriteLine("{0} {1} {2}", empleado.FirstName, empleado.LastName, empleado.BirthDate.GetValueOrDefault().ToShortDateString());
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("==========================================================");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
 
@@ -331,6 +492,21 @@ namespace ConsoleAppEjerciciosLinq
             Console.WriteLine("==========================================================");
             Console.ForegroundColor = ConsoleColor.White;
 
+            var productos = Productos
+                .OrderByDescending(r => r.UnitsInStock)
+                .Take(10)
+                .OrderByDescending(r => r.UnitPrice)
+                .Take(5)
+                .ToList();
+
+            foreach (var item in productos)
+            {
+                Console.WriteLine("{0} - Stock: {1} - Precio: {2}", item.ProductName, item.UnitsInStock, item.UnitPrice);
+            }
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("==========================================================");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
 
